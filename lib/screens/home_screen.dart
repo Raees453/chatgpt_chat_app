@@ -32,38 +32,35 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: SizedBox(
-          width: width * 0.95,
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Column(
-                children: [
-                  Expanded(
-                    child: ListView.builder(
-                      reverse: true,
-                      itemCount: _messages.length,
-                      itemBuilder: (context, index) =>
-                          ChatMessageWidget(message: _messages[index]),
-                    ),
-                  ),
-                  const SizedBox(height: 80),
-                ],
-              ),
-              Positioned(
-                bottom: 30,
-                child: buildSendTextRow(),
-              ),
-              if (_isLoading)
-                const Center(
-                  child: CircularProgressIndicator.adaptive(
-                    strokeWidth: 30,
-                  ),
+      body: SizedBox(
+        width: width * 0.95,
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            Column(
+              children: [
+                ListView.builder(
+                  reverse: true,
+                  shrinkWrap: true,
+                  primary: false,
+                  itemCount: _messages.length,
+                  itemBuilder: (context, index) =>
+                      ChatMessageWidget(message: _messages[index]),
                 ),
-            ],
-          ),
+                const SizedBox(height: 80),
+              ],
+            ),
+            Positioned(
+              bottom: 30,
+              child: buildSendTextRow(),
+            ),
+            if (_isLoading)
+              const Center(
+                child: CircularProgressIndicator.adaptive(
+                  strokeWidth: 30,
+                ),
+              ),
+          ],
         ),
       ),
     );
@@ -103,6 +100,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _onPressed() async {
+    FocusScope.of(context).unfocus();
+
     final prompt = _controller.text.trim();
     _controller.text = '';
     setState(() {

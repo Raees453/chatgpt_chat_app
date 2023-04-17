@@ -6,6 +6,8 @@ import 'package:http/http.dart' as http;
 
 class ApiHandler {
   static Future<Map<String, dynamic>> getResponse(String prompt) async {
+
+    print('Hello');
     try {
       final response = await http.post(
         Constants.apiLink,
@@ -21,14 +23,17 @@ class ApiHandler {
         }),
       );
 
+      print('Body :${response.body}');
       var result =
           jsonDecode(response.body)['choices'][0]['message']['content'];
 
+      print('Result: ${result}');
       bool success = true;
       if (result == null) {
         success = false;
         result = 'Some error occurred';
       }
+
       return _buildMap(result, success);
     } on SocketException {
       return _buildMap('Please check you internet connection', false);
