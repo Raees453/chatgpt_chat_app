@@ -14,7 +14,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  late final double width;
+  late double width;
 
   final _messages = <ChatMessage>[];
   final _controller = TextEditingController();
@@ -24,7 +24,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void didChangeDependencies() {
     width = MediaQuery.of(context).size.width;
-
     ToastContext().init(context);
     super.didChangeDependencies();
   }
@@ -32,35 +31,36 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SizedBox(
-        width: width * 0.95,
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Column(
-              children: [
-                ListView.builder(
-                  reverse: true,
-                  shrinkWrap: true,
-                  primary: false,
-                  itemCount: _messages.length,
-                  itemBuilder: (context, index) =>
-                      ChatMessageWidget(message: _messages[index]),
-                ),
-                const SizedBox(height: 80),
-              ],
-            ),
-            Positioned(
-              bottom: 30,
-              child: buildSendTextRow(),
-            ),
-            if (_isLoading)
-              const Center(
-                child: CircularProgressIndicator.adaptive(
-                  strokeWidth: 30,
-                ),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: SizedBox(
+          width: width * 0.95,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Column(
+                children: [
+                  Expanded(
+                    child: ListView.builder(
+                      reverse: true,
+                      itemCount: _messages.length,
+                      itemBuilder: (context, index) =>
+                          ChatMessageWidget(message: _messages[index]),
+                    ),
+                  ),
+                  const SizedBox(height: 90),
+                ],
               ),
-          ],
+              Positioned(
+                bottom: 10,
+                child: buildSendTextRow(),
+              ),
+              if (_isLoading)
+                const Center(
+                  child: CircularProgressIndicator.adaptive(),
+                ),
+            ],
+          ),
         ),
       ),
     );
@@ -104,21 +104,25 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final prompt = _controller.text.trim();
     _controller.text = '';
-    setState(() {
-      _isLoading = true;
-      _messages.insert(0, ChatMessage(prompt: prompt, sender: Sender.user));
-    });
+
+    _update(true, ChatMessage(prompt: prompt, sender: Sender.user));
 
     final response = await ApiHandler.getResponse(prompt);
 
     final ChatMessage message = ChatMessage(
       prompt: response['message'],
       sender: Sender.bot,
-      isError: response['success'],
+      isError: !response['success'],
     );
 
-    _isLoading = false;
-    setState(() => _messages.insert(0, message));
+    _update(false, message);
+  }
+
+  void _update(bool isLoading, ChatMessage message) {
+    setState(() {
+      _isLoading = isLoading;
+      _messages.insert(0, message);
+    });
   }
 
   @override

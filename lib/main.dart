@@ -13,11 +13,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: const HomeScreen(),
       theme: ThemeData(
-        scaffoldBackgroundColor: Colors.white,
         useMaterial3: true,
-        // scaffoldBackgroundColor: const Color.fromRGBO(27, 31, 36, 0.85),
+        scaffoldBackgroundColor: const Color.fromRGBO(27, 31, 36, 0.85),
         colorScheme: const ColorScheme.dark(
           primary: Color.fromRGBO(27, 31, 36, 1),
           secondary: Color.fromRGBO(61, 60, 94, 1),
@@ -26,6 +24,8 @@ class MyApp extends StatelessWidget {
           bodyMedium: GoogleFonts.poppins(),
         ),
       ),
+      home: const HomeScreen(),
+
     );
   }
 }
