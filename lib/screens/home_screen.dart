@@ -17,6 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
   late double width;
 
   final _messages = <ChatMessage>[];
+  final _prompts = <String>[];
   final _controller = TextEditingController();
 
   bool _isLoading = false;
@@ -104,10 +105,11 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final prompt = _controller.text.trim();
     _controller.text = '';
+    _prompts.add(prompt);
 
     _update(true, ChatMessage(prompt: prompt, sender: Sender.user));
 
-    final response = await ApiHandler.getResponse(prompt);
+    final response = await ApiHandler.getResponse(_prompts);
 
     final ChatMessage message = ChatMessage(
       prompt: response['message'],
@@ -115,6 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
       isError: !response['success'],
     );
 
+    _prompts.add(response['message']);
     _update(false, message);
   }
 

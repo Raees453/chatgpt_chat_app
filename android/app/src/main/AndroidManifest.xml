@@ -1,7 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="dev.awp.bot_chat_app">
+    <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="bot_chat_app"
+        android:label="Chat GPT"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

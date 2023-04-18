@@ -5,7 +5,7 @@ import 'package:bot_chat_app/constants/constants.dart';
 import 'package:http/http.dart' as http;
 
 class ApiHandler {
-  static Future<Map<String, dynamic>> getResponse(String prompt) async {
+  static Future<Map<String, dynamic>> getResponse(List<String> prompts) async {
     try {
       final response = await http.post(
         Constants.apiLink,
@@ -15,13 +15,11 @@ class ApiHandler {
         },
         body: jsonEncode({
           "model": Constants.apiModel,
-          "messages": [
-            {"role": "user", "content": prompt}
-          ]
+          "messages": prompts
+              .map((prompt) => {'role': 'user', 'content': prompt})
+              .toList(),
         }),
       );
-
-      print('Body: ${response.body}');
 
       var result =
           jsonDecode(response.body)?['choices'][0]?['message']['content'];
